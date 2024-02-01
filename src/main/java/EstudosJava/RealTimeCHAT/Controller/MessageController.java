@@ -5,6 +5,8 @@ import EstudosJava.RealTimeCHAT.Service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,8 @@ import java.util.List;
 public class MessageController {
     @Autowired
     private MessageService MessageService;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @GetMapping("/message")
     public ResponseEntity<List<Message>> messageGet(Model model) {
@@ -24,10 +28,11 @@ public class MessageController {
     }
     @PostMapping("/message")
     public ResponseEntity<Message> messagePost(@RequestBody Message message) {
-        if (message == null || message.getSender() == null || message.getContent() == null) {
+        if (message == null || message.getContent() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         Message savedMessage = MessageService.saveMessage(message);
         return new ResponseEntity<>(savedMessage, HttpStatus.OK);
     }
+
 }
